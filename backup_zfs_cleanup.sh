@@ -13,7 +13,7 @@ fi
 # reusable functions
 clean_logs()
 { 
-  find $LOGDIR -mtime +120 -name "cleanup.*.log*" -exec rm {} \;
+  find $LOGDIR -mtime +${LOG_RETENTION} -name "cleanup.*.log*" -exec rm {} \;
 }
 
 if [ $# -ne 2 ]
@@ -32,10 +32,6 @@ if [ ! -z $2 ]
 then
   BACKUP_POOL=$2
 fi
-
-# commands to be usable in crontab
-ZFS=/sbin/zfs
-ZPOOL=/sbin/zpool
 
 # local vars
 EXECLOGFILE=${LOGDIR}/cleanup.`date +%Y%m%d.%H%M`.log

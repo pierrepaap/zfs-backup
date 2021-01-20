@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# commands to be usable in crontab
-ZFS=/sbin/zfs
-ZPOOL=/sbin/zpool
-
 # global vars
 if [ -f `dirname $0`/backup.vars ]
 then
@@ -19,7 +15,7 @@ LOGFILE=${LOGDIR}/snap.`date +%Y%m%d.%H%M`.log
 # reusable functions
 clean_logs()
 { 
-  find $LOGDIR -mtime +120 -name "snap.*.log*" -exec rm {} \;
+  find $LOGDIR -mtime +${LOG_RETENTION} -name "snap.*.log*" -exec rm {} \;
 }
 
 # args
