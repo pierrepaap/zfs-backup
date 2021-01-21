@@ -1,5 +1,9 @@
 #!/bin/bash
 
+##
+##  This script depends on the backup.vars parameter file
+##
+
 #
 # global vars
 #
@@ -12,21 +16,28 @@ else
 fi
 
 #
+# reusable functions
+#
+clean_logs()
+{ 
+  find $LOGDIR -mtime +120 -name "snap.*.log*" -exec rm {} \;
+}
+
+#
 # args
 #
-if [ $# -ne 1 ]
+if [ $# -lt 1 ] || [ $# -ne 1 ] 
 then
-  echo "We need 1 argument: <pool> to create snapshots for its filesystems"
-  fatal "We need 1 argument: <pool> to create snapshots for its filesystems"
-else
-  DATA_POOL=$1
+  echo "Usage: $0 <data_pool_name> <backup_pool_name>"
+  exit 1
 fi
-log "--- $DATA_POOL ---"
+
+DATA_POOL=$1
+echo "--- $DATA_POOL ---"
 
 #
 # local vars
 #
-# logging output of zfs snapshot command
 LOGFILE=${LOGDIR}/snap.`date +%Y%m%d.%H%M`.log
 
 ##########

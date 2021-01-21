@@ -1,5 +1,9 @@
 #!/bin/bash
 
+##
+##  This script depends on the backup.vars parameter file
+##
+
 #
 # global vars
 #
@@ -8,33 +12,43 @@ then
   . `dirname $0`/backup.vars
 else
   echo "backup.vars missing"
-  exit 1
+  exit 2
 fi
+
+#
+# reusable functions
+#
+check_pool()
+{
+  for fs_name in ${BKP_LIST}
+  do
+#    echo "   testing $1 against backed up fs $fs_name"
+    if [ $1 == $fs_name ]
+    then
+      IS_OK=1
+      return
+    else
+      IS_OK=0
+    fi
+  done
+}
 
 #
 # args
 #
-if [ $# -ne 2 ]
+if [ $# -lt 1 ] || [ $# -ne 2 ] 
 then
-  echo "We need 2 arguments <datapool/fs> <backup_pool>"
-  log "We need 2 arguments <datapool/fs> <backup_pool>"
-  fatal "NB : This script assumes <backup_pool> is created and empty"
-else
-  SOURCE=$1
-  BACKUP_POOL=$2
-  SOURCE_POOL=`echo $SOURCE | cut -f1 -d\/`
-  SOURCE_FS=`echo $SOURCE | cut -f2 -d\/`
-  if [ `echo $SOURCE | grep / | wc -l` -eq 0 ]
-  then
-    echo "No FS specified in ${SOURCE}"
-    fatal "No FS specified in ${SOURCE}"
-  fi
+  echo "Usage: $0 <data_pool_name> <backup_pool_name>"
+  exit 1
 fi
+
+DATA_POOL=$1
+BACKUP_POOL=$2
 
 #
 # local vars
 #
-LOGFILE=${LOGDIR}/backup_init.`date +%Y%m%d.%H%M`.log
+LOGFILE=/zdocs/server/log/backup_init.`date +%Y%m%d.%H%M`.log
 
 ##########
 # MAIN 

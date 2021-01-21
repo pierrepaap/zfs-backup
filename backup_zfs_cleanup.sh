@@ -1,5 +1,9 @@
 #!/bin/bash
 
+##
+##  This script depends on the backup.vars parameter file
+##
+
 #
 # global vars
 #
@@ -8,25 +12,33 @@ then
   . `dirname $0`/backup.vars
 else
   echo "backup.vars missing"
-  exit 1
+  exit 2
 fi
+
+#
+# reusable functions
+#
+clean_logs()
+{ 
+  find $LOGDIR -mtime +120 -name "cleanup.*.log*" -exec rm {} \;
+}
+
 
 #
 # args
 #
-if [ $# -ne 2 ]
+if [ $# -lt 1 ] || [ $# -ne 2 ] 
 then
-  echo "We need 2 arguments <data_pool> <backup_pool>"
-  fatal "We need 2 arguments <data_pool> <backup_pool>"
-else
-  DATA_POOL=$1
-  BACKUP_POOL=$2
+  echo "Usage: $0 <data_pool_name> <backup_pool_name>"
+  exit 1
 fi
+
+DATA_POOL=$1
+BACKUP_POOL=$2
 
 #
 # local vars
 #
-# Overriding global EXECLOGFILE
 EXECLOGFILE=${LOGDIR}/cleanup.`date +%Y%m%d.%H%M`.log
 TEMPFILE=${LOGDIR}/temp_`basename $0`_$$
 
@@ -68,7 +80,6 @@ do
 
   log "${POOL} - Retrieving list of ALL snapshots (of the top zfs) and keeping the PREVIOUS backups"
   TOP_SNAPS=`${ZFS} list -H -r -o name -t snapshot ${POOL} | grep -v \/ | sort -r `
-  ###TOP_SNAPS=`echo $SNAPS | sed -e "s,/[a-z]*\@,\@,g"`
   if [ -z "$TOP_SNAPS" ]
   then
     log "No top zfs snapshots, retrieveing all other snapshots"
