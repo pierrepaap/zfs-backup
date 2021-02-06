@@ -28,7 +28,7 @@ fi
 #
 # local vars
 #
-LOGFILE=/zdocs/server/log/backup_init.`date +%Y%m%d.%H%M`.log
+LOGFILE=${LOGDIR}/backup_init.`date +%Y%m%d.%H%M`.log
 
 #
 # reusable functions
