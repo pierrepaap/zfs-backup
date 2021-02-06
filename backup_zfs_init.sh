@@ -16,13 +16,14 @@ fi
 #
 if [ $# -ne 2 ]
 then
-  echo "We need 2 arguments <data_pool> <backup_pool> \n"
+  echo "We need 2 arguments <datapool/fs> <backup_pool> \n"
+  echo "This script assumes <backup_pool is created and empty\n"
   exit 2
 else
-  DATA_POOL=$1
+  DATA_FS=$1
   BACKUP_POOL=$2
-  SOURCE_POOL=`echo $DATA_POOL | cut -f1 -d\/`
-  SOURCE_FS=`echo $DATA_POOL | cut -f2 -d\/`
+  SOURCE_POOL=`echo $DATA_FS | cut -f1 -d\/`
+  SOURCE_FS=`echo $DATA_FS | cut -f2 -d\/`
 fi
 
 #
@@ -30,55 +31,44 @@ fi
 #
 LOGFILE=${LOGDIR}/backup_init.`date +%Y%m%d.%H%M`.log
 
-#
-# reusable functions
-#
-check_pool()
-{
-  for fs_name in ${BKP_LIST}
-  do
-#    echo "   testing $1 against backed up fs $fs_name"
-    if [ $1 == $fs_name ]
-    then
-      IS_OK=1
-      return
-    else
-      IS_OK=0
-    fi
-  done
-}
-
 ##########
 # MAIN 
 ##########
 
-# Check backup pool status and recreate it if needed
+# Check backup pool status
 EXISTS_BKP_FS=`${ZFS} list -H ${BACKUP_POOL} | grep ^${BACKUP_POOL} | wc -l `
-if [ ${EXISTS_BKP_FS} -eq 0 ]
+if [${EXISTS_BKP_FS} -neq 0]
 then
-  if [ `${ZPOOL} list -H | grep ^${BACKUP_POOL} | grep ONLINE | wc -l ` -eq 0 ]
+  log "Pool ${BACKUP_POOL} is not empty, cannot proceed"
+  exit 3
+fi
+
+# Check source pool status
+EXISTS_SRC_FS=`${ZFS} list -H ${SOURCE_POOL} | grep ^${SOURCE_POOL} | wc -l `
+if [${EXISTS_SRC_FS} -eq 0]
+then
+  log "Pool ${SOURCE_POOL} is empty, nothing to backup"
+  exit 0
+else
+  EXISTS_SRC_SNAP=`${ZFS} list -H -r -t snapshot ${SOURCE_POOL} | wc -l`
+  if [${EXISTS_SRC_SNAP} -eq 0]
   then
-    echo " destroying pool ${BACKUP_POOL}"
-    ${ZPOOL} destroy ${BACKUP_POOL}
-    echo " recreating pool ${BACKUP_POOL}"
-    ${ZPOOL} create ${BACKUP_POOL} /dev/${BACKUP_DEVICE}
+    # TODO
+    # crete a ref in backup.vars for snapsshot script
+    # execute snapshot script for each FS
   fi
 fi
 
-##echo "FS LIST : ${FS_LIST}"
-##echo "--------------------"
-
-# backup each pool separately
-for pool in ${FS_LIST}
+# Backup each fs separately
+SRC_FS_LIST=`${ZFS} list -H -r -t snapshot ${SOURCE_POOL} | cut -f1 -d\@ `
+BKP_FS_LIST=`${ZFS} list -H -r -t snapshot ${BACKUP_POOL} | cut -f1 -d\@  | cut -f2 -d\/ `
+for fs in ${SRC_FS_LIST}
 do
-  CUR_FS=`echo $pool | cut -f2 -d\/ ` 
-  check_pool ${CUR_FS}
+  CUR_FS=`echo $fs | cut -f2 -d\/ ` 
 
-  if [ ${pool} != $DATA_POOL -a ${IS_OK} -eq 0 ]
-  then 
-    echo "Start backup of $pool"
-    ${ZFS} send -v ${pool}@${TODAY} | ${ZFS} recv -Fduv ${BACKUP_POOL}
-    sleep 120
-  fi
+  echo "Start backup of $fs"
+  (${ZFS} send -v ${fs}@${TODAY} | ${ZFS} recv -Fduv ${BACKUP_POOL}) &
+  disown
+  sleep 10
 done
 
