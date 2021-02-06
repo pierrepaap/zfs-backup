@@ -8,7 +8,7 @@ then
   . `dirname $0`/backup.vars
 else
   echo "backup.vars missing"
-  exit 2
+  exit 1
 fi
 
 #
@@ -17,16 +17,9 @@ fi
 if [ $# -ne 2 ]
 then
   echo "We need 2 arguments <data_pool> <backup_pool> \n"
-  exit 1
-fi
-
-if [ ! -z $1 ]
-then
+  exit 2
+else
   DATA_POOL=$1
-fi
-
-if [ ! -z $2 ]
-then
   BACKUP_POOL=$2
 fi
 
@@ -114,6 +107,7 @@ do
     fi
   done
 
+  # displaying the deleted snapshot
   cat $TEMPFILE
   rm $TEMPFILE
 

@@ -14,16 +14,15 @@ fi
 #
 # args
 #
-if [ ! -z $1 ]
+if [ $# -ne 2 ]
 then
+  echo "We need 2 arguments <data_pool> <backup_pool> \n"
+  exit 2
+else
   DATA_POOL=$1
+  BACKUP_POOL=$2
   SOURCE_POOL=`echo $DATA_POOL | cut -f1 -d\/`
   SOURCE_FS=`echo $DATA_POOL | cut -f2 -d\/`
-fi
-
-if [ ! -z $2 ]
-then
-  BACKUP_POOL=$2
 fi
 
 #

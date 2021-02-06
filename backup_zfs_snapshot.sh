@@ -14,11 +14,14 @@ fi
 #
 # args
 #
-if [ ! -z $1 ]
+if [ $# -ne 1 ]
 then
+  echo "We need 1 argument: <pool> to create snapshots for its filesystems \n"
+  exit 2
+else
   DATA_POOL=$1
 fi
-echo "--- $DATA_POOL ---"
+log "--- $DATA_POOL ---"
 
 #
 # local vars
