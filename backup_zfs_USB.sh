@@ -9,15 +9,7 @@ else
   exit 1
 fi
 
-# local vars
-LOGFILE=${LOGDIR}/backup.`date +%Y%m%d.%H%M`.log
-
-# reusable functions
-clean_logs()
-{ 
-  find $LOGDIR -mtime +${LOG_RETENTION} -name "backup*.log*" -exec rm {} \;
-}
-
+# args
 if [ ! -z $1 ]
 then
   DATA_POOL=$1
@@ -30,6 +22,14 @@ then
   BACKUP_POOL=$2
 fi
 
+# local vars
+LOGFILE=${LOGDIR}/backup.`date +%Y%m%d.%H%M`.log
+
+# reusable functions
+clean_logs()
+{ 
+  find $LOGDIR -mtime +${LOG_RETENTION} -name "backup*.log*" -exec rm {} \;
+}
 
 ##########
 # MAIN 

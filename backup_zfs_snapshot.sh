@@ -9,6 +9,13 @@ else
   exit 1
 fi
 
+# args
+if [ ! -z $1 ]
+then
+  DATA_POOL=$1
+fi
+echo "--- $DATA_POOL ---"
+
 # local vars
 LOGFILE=${LOGDIR}/snap.`date +%Y%m%d.%H%M`.log
 
@@ -17,13 +24,6 @@ clean_logs()
 { 
   find $LOGDIR -mtime +${LOG_RETENTION} -name "snap.*.log*" -exec rm {} \;
 }
-
-# args
-if [ ! -z $1 ]
-then
-  DATA_POOL=$1
-fi
-echo "--- $DATA_POOL ---"
 
 ##########
 # MAIN 
