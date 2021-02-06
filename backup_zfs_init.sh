@@ -1,6 +1,8 @@
 #!/bin/bash
 
+#
 # global vars
+#
 if [ -f `dirname $0`/backup.vars ]
 then
   . `dirname $0`/backup.vars
@@ -8,7 +10,10 @@ else
   echo "backup.vars missing"
   exit 1
 fi
+
+#
 # args
+#
 if [ ! -z $1 ]
 then
   DATA_POOL=$1
@@ -20,10 +25,15 @@ if [ ! -z $2 ]
 then
   BACKUP_POOL=$2
 fi
+
+#
 # local vars
+#
 LOGFILE=/zdocs/server/log/backup_init.`date +%Y%m%d.%H%M`.log
 
+#
 # reusable functions
+#
 check_pool()
 {
   for fs_name in ${BKP_LIST}

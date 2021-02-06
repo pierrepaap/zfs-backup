@@ -1,7 +1,8 @@
 #!/bin/bash
-##set -x
 
+#
 # global vars
+#
 if [ -f `dirname $0`/backup.vars ]
 then
   . `dirname $0`/backup.vars
@@ -10,7 +11,9 @@ else
   exit 2
 fi
 
+#
 # args
+#
 if [ $# -ne 2 ]
 then
   echo "We need 2 arguments <data_pool> <backup_pool> \n"
@@ -27,11 +30,15 @@ then
   BACKUP_POOL=$2
 fi
 
+#
 # local vars
+#
 EXECLOGFILE=${LOGDIR}/cleanup.`date +%Y%m%d.%H%M`.log
 TEMPFILE=${LOGDIR}/temp_`basename $0`_$$
 
+#
 # reusable functions
+#
 clean_logs()
 { 
   find $LOGDIR -mtime +${LOG_RETENTION} -name "cleanup.*.log*" -exec rm {} \;

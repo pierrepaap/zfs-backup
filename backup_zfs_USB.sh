@@ -1,6 +1,8 @@
 #!/bin/bash
 
+#
 # global vars
+#
 if [ -f `dirname $0`/backup.vars ]
 then
   . `dirname $0`/backup.vars
@@ -9,7 +11,9 @@ else
   exit 1
 fi
 
+#
 # args
+#
 if [ ! -z $1 ]
 then
   DATA_POOL=$1
@@ -22,10 +26,14 @@ then
   BACKUP_POOL=$2
 fi
 
+#
 # local vars
+#
 LOGFILE=${LOGDIR}/backup.`date +%Y%m%d.%H%M`.log
 
+#
 # reusable functions
+#
 clean_logs()
 { 
   find $LOGDIR -mtime +${LOG_RETENTION} -name "backup*.log*" -exec rm {} \;
