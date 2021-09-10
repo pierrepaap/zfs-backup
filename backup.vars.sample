@@ -1,0 +1,55 @@
+#
+# variable file for ZFS backup scripts
+#
+
+# username or email address receiving notifications (no default)
+#MAIL_USER=
+
+# directory path where to store log files 
+LOGDIR=.
+# full file path for all the shell outputs
+EXECLOGFILE=${LOGDIR}/exec.log
+# retention time for all log files
+LOG_RETENTION=60
+
+# number of snapshot to retain before their cleaned up
+SNAPS_TO_KEEP=2
+
+# zpool and zfs path identification
+if [ ! -z `which zfs` ]
+then
+  ZFS=`which zfs`
+fi
+if [ ! -z `which zpool` ]
+then
+  ZPOOL=/sbin/zpool
+fi
+
+TODAY=`date +"%Y%m%d"`
+YESTERDAY=`date -d 'yesterday' +"%Y%m%d"`
+
+# common functions for the scripts
+log()
+{
+        echo "`date +%Y%m%d-%H%M` $1" >> $EXECLOGFILE
+}
+
+fatal()
+{
+	log "$1"
+	exit
+}
+
+sndmail()
+{
+  if [ ! -z ${MAIL_USER} ]
+  then
+        tail -15 $EXECLOGFILE | mail -s "SERVER WARNING : problem during backup" $MAIL_USER
+  fi
+}
+
+# basic check for ZFS CLI presence
+if [ -z ${ZFS} || -z ${ZPOOL} ]
+then
+  fatal "The zfs or zpool program cannot be found. Exiting"
+fi
