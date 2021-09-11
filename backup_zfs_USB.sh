@@ -16,7 +16,8 @@ fi
 #
 if [ $# -ne 2 ]
 then
-  fatal "We need 2 arguments <src_pool/fs> <backup_pool>"
+  echo "We need 2 arguments <datapool/fs> <backup_pool>"
+  fatal "We need 2 arguments <datapool/fs> <backup_pool>"
 else
   SOURCE=$1
   BACKUP_POOL=$2

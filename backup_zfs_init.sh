@@ -17,6 +17,7 @@ fi
 if [ $# -ne 2 ]
 then
   echo "We need 2 arguments <datapool/fs> <backup_pool>"
+  log "We need 2 arguments <datapool/fs> <backup_pool>"
   fatal "NB : This script assumes <backup_pool> is created and empty"
 else
   DATA_FS=$1

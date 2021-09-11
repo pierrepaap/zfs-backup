@@ -16,7 +16,8 @@ fi
 #
 if [ $# -ne 2 ]
 then
-  fatal "We need 2 arguments <data_pool> <backup_pool> \n"
+  echo "We need 2 arguments <data_pool> <backup_pool>"
+  fatal "We need 2 arguments <data_pool> <backup_pool>"
 else
   DATA_POOL=$1
   BACKUP_POOL=$2
