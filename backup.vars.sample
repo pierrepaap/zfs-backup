@@ -22,11 +22,11 @@ then
 fi
 if [ ! -z `which zpool` ]
 then
-  ZPOOL=/sbin/zpool
+  ZPOOL=`which zpool`
 fi
 
 TODAY=`date +"%Y%m%d"`
-YESTERDAY=`date -d 'yesterday' +"%Y%m%d"`
+#YESTERDAY=`date -d 'yesterday' +"%Y%m%d"`
 
 # common functions for the scripts
 log()
@@ -37,7 +37,7 @@ log()
 fatal()
 {
 	log "$1"
-	exit
+	exit 1
 }
 
 sndmail()
@@ -49,7 +49,7 @@ sndmail()
 }
 
 # basic check for ZFS CLI presence
-if [ -z ${ZFS} || -z ${ZPOOL} ]
+if [ -z ${ZFS} -o -z ${ZPOOL} ]
 then
   fatal "The zfs or zpool program cannot be found. Exiting"
 fi
