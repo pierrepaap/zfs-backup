@@ -37,6 +37,7 @@ log()
 fatal()
 {
 	log "$1"
+  echo "Fatal error. Exiting"
 	exit 1
 }
 

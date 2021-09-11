@@ -16,9 +16,8 @@ fi
 #
 if [ $# -ne 2 ]
 then
-  echo "We need 2 arguments <datapool/fs> <backup_pool> \n"
-  echo "This script assumes <backup_pool is created and empty\n"
-  exit 2
+  echo "We need 2 arguments <datapool/fs> <backup_pool>"
+  fatal "NB : This script assumes <backup_pool> is created and empty"
 else
   DATA_FS=$1
   BACKUP_POOL=$2
@@ -35,27 +34,25 @@ LOGFILE=${LOGDIR}/backup_init.`date +%Y%m%d.%H%M`.log
 # MAIN 
 ##########
 
-# Check backup pool status
-EXISTS_BKP_FS=`${ZFS} list -H ${BACKUP_POOL} | grep ^${BACKUP_POOL} | wc -l `
-if [${EXISTS_BKP_FS} -neq 0]
+echo "Logs can be found in ${EXECLOGFILE} and ${LOGFILE}"
+
+# Check if FS exists on backup pool
+EXISTS_BKP_FS=`${ZFS} list -H | grep ^${BACKUP_POOL}/${SOURCE_FS} | wc -l `
+if [ ${EXISTS_BKP_FS} -ne 0 ]
 then
-  log "Pool ${BACKUP_POOL} is not empty, cannot proceed"
-  exit 3
+  fatal "Pool ${BACKUP_POOL} already has ${SOURCE_FS} filesystem, cannot proceed with init"
 fi
 
 # Check source pool status
-EXISTS_SRC_FS=`${ZFS} list -H ${SOURCE_POOL} | grep ^${SOURCE_POOL} | wc -l `
-if [${EXISTS_SRC_FS} -eq 0]
+EXISTS_SRC_FS=`${ZFS} list -H | grep ^${SOURCE_POOL}/${SOURCE_FS} | wc -l `
+if [ ${EXISTS_SRC_FS} -eq 0 ]
 then
-  log "Pool ${SOURCE_POOL} is empty, nothing to backup"
-  exit 0
+  fatal "Source FS ${SOURCE_POOL}/${SOURCE_FS} does not exist, nothing to backup"
 else
   EXISTS_SRC_SNAP=`${ZFS} list -H -r -t snapshot ${SOURCE_POOL} | wc -l`
-  if [${EXISTS_SRC_SNAP} -eq 0]
+  if [ ${EXISTS_SRC_SNAP} -eq 0 ]
   then
-    # TODO
-    # crete a ref in backup.vars for snapsshot script
-    # execute snapshot script for each FS
+    fatal "There are not snapshot on ${SOURCE_POOL}/${SOURCE_FS}. Relaunch after snapshot have been created."
   fi
 fi
 
