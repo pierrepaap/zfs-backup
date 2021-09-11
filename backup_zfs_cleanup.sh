@@ -35,7 +35,7 @@ TEMPFILE=${LOGDIR}/temp_`basename $0`_$$
 #
 clean_logs()
 { 
-  log "Cleaning log files older than ${LOG_RETENTION}"
+  log "Cleaning log files older than ${LOG_RETENTION} days"
   find $LOGDIR -mtime +${LOG_RETENTION} -name "*.log*" -exec rm {} \;
 }
 
