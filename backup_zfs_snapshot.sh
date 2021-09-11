@@ -16,8 +16,7 @@ fi
 #
 if [ $# -ne 1 ]
 then
-  echo "We need 1 argument: <pool> to create snapshots for its filesystems \n"
-  exit 2
+  fatal "We need 1 argument: <pool> to create snapshots for its filesystems \n"
 else
   DATA_POOL=$1
 fi
@@ -26,32 +25,24 @@ log "--- $DATA_POOL ---"
 #
 # local vars
 #
+# logging output of zfs snapshot command
 LOGFILE=${LOGDIR}/snap.`date +%Y%m%d.%H%M`.log
-
-#
-# reusable functions
-#
-clean_logs()
-{ 
-  find $LOGDIR -mtime +${LOG_RETENTION} -name "snap.*.log*" -exec rm {} \;
-}
 
 ##########
 # MAIN 
 ##########
 
-clean_logs
 log "*******************************"
 log "Starting ZFS snapshot of $DATA_POOL on `date '+%Y%m%d-%H%M'`"
 
 # create today snapshot
 if ${ZFS} list -H -o name -t snapshot | sort | grep "${DATA_POOL}@${TODAY}$" >> $LOGFILE 2>&1
 then
-  log " snapshot, already exists"
+  log " Snapshot ${DATA_POOL}@${TODAY} already exists"
 else
-  log " taking todays snapshot, ${DATA_POOL}@${TODAY}"
+  log " Taking todays snapshot ${DATA_POOL}@${TODAY}"
   ${ZFS} snapshot -r ${DATA_POOL}@${TODAY} >> $LOGFILE 2>&1
 fi  
 
-log "end of snapshot"
+log "End of snapshot"
 
