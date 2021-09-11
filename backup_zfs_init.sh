@@ -20,10 +20,14 @@ then
   log "We need 2 arguments <datapool/fs> <backup_pool>"
   fatal "NB : This script assumes <backup_pool> is created and empty"
 else
-  DATA_FS=$1
+  SOURCE=$1
   BACKUP_POOL=$2
-  SOURCE_POOL=`echo $DATA_FS | cut -f1 -d\/`
-  SOURCE_FS=`echo $DATA_FS | cut -f2 -d\/`
+  SOURCE_POOL=`echo $SOURCE | cut -f1 -d\/`
+  SOURCE_FS=`echo $SOURCE | cut -f2 -d\/`
+  if [ `echo $SOURCE | grep / | wc -l` -eq 0 ]
+  then
+    fatal "No FS specified in ${SOURCE}"
+  fi
 fi
 
 #
@@ -57,16 +61,16 @@ else
   fi
 fi
 
-# Backup each fs separately
-SRC_FS_LIST=`${ZFS} list -H -r -t snapshot ${SOURCE_POOL} | cut -f1 -d\@ `
-BKP_FS_LIST=`${ZFS} list -H -r -t snapshot ${BACKUP_POOL} | cut -f1 -d\@  | cut -f2 -d\/ `
-for fs in ${SRC_FS_LIST}
-do
-  CUR_FS=`echo $fs | cut -f2 -d\/ ` 
+#look for unique snapshot name(s)/date(s)
+log "Retrieving the list of unique snapshots name(s)/date(s)"
+SNAPS=`${ZFS} list -H -r -o name -t snapshot ${SOURCE_POOL} | sort -r | cut -f2 -d\@ | sort -u`
+log "List : ${SNAPS}"
 
-  log "Start backup of $fs"
-  (${ZFS} send -v ${fs}@${TODAY} | ${ZFS} recv -Fduv ${BACKUP_POOL}) >> ${LOGFILE} 2>&1 &
+for snap in ${SNAPS}
+do
+  SNAPS=`echo $SNAPS | sed -e "s,${SOURCE_POOL}\@${snap},,g"`
+  log "Start backup of ${SOURCE_POOL}@${snap}"
+  (${ZFS} send -R ${SOURCE_POOL}@${snap} | ${ZFS} recv -Fduv ${BACKUP_POOL}) >> ${LOGFILE} 2>&1 &
   disown
   sleep 10
 done
-
