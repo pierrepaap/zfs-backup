@@ -16,8 +16,7 @@ fi
 #
 if [ $# -ne 2 ]
 then
-  echo "We need 2 arguments <data_pool> <backup_pool> \n"
-  exit 2
+  fatal "We need 2 arguments <data_pool> <backup_pool> \n"
 else
   DATA_POOL=$1
   BACKUP_POOL=$2
@@ -26,6 +25,7 @@ fi
 #
 # local vars
 #
+# Overriding global EXECLOGFILE
 EXECLOGFILE=${LOGDIR}/cleanup.`date +%Y%m%d.%H%M`.log
 TEMPFILE=${LOGDIR}/temp_`basename $0`_$$
 
@@ -34,7 +34,8 @@ TEMPFILE=${LOGDIR}/temp_`basename $0`_$$
 #
 clean_logs()
 { 
-  find $LOGDIR -mtime +${LOG_RETENTION} -name "cleanup.*.log*" -exec rm {} \;
+  log "Cleaning log files older than ${LOG_RETENTION}"
+  find $LOGDIR -mtime +${LOG_RETENTION} -name "*.log*" -exec rm {} \;
 }
 
 ##########
@@ -49,12 +50,11 @@ for POOL in $BACKUP_POOL $DATA_POOL
 do
   log " "
   log "************************ POOL ${POOL} *************************"
-  log "Starting ZFS cleanup of ${POOL} on `date '+%Y%m%d-%H%M'`"
+  log "Starting cleanup of snapshots in ${POOL} on `date '+%Y%m%d-%H%M'`"
 
 
   # look for last SNAPS_TO_KEEP backup(s)
   PREVIOUS=`${ZFS} list -H -r -o name -t snapshot ${POOL} | sort -r | head -$SNAPS_TO_KEEP | cut -f2 -d\@ | sort -u`
-##  log "last backup(s) : $PREVIOUS"
   if [ -z "${PREVIOUS}" ]
   then
     log "We don't have a backup => don't cleanup, skipping"
@@ -102,7 +102,7 @@ do
     if [ $NB -eq 0 ]
     then
       log "Deleting $snap"
-      ${ZFS} destroy -r $snap || fatal "cannot destroy snapshot $snap"
+      ${ZFS} destroy -r $snap || fatal "Cannot destroy snapshot $snap"
       echo $snap >> $TEMPFILE
     fi
   done
@@ -111,6 +111,6 @@ do
   cat $TEMPFILE
   rm $TEMPFILE
 
-  log "end of cleanup"
+  log "End of cleanup"
 
 done
