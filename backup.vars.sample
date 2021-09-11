@@ -31,7 +31,7 @@ TODAY=`date +"%Y%m%d"`
 # common functions for the scripts
 log()
 {
-        echo "`date +%Y%m%d-%H%M` $1" >> $EXECLOGFILE
+        echo "`date +%Y%m%d-%H%M` - `basename $0` - $1" >> $EXECLOGFILE
 }
 
 fatal()
