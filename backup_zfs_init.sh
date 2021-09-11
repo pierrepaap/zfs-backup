@@ -63,8 +63,8 @@ for fs in ${SRC_FS_LIST}
 do
   CUR_FS=`echo $fs | cut -f2 -d\/ ` 
 
-  echo "Start backup of $fs"
-  (${ZFS} send -v ${fs}@${TODAY} | ${ZFS} recv -Fduv ${BACKUP_POOL}) &
+  log "Start backup of $fs"
+  (${ZFS} send -v ${fs}@${TODAY} | ${ZFS} recv -Fduv ${BACKUP_POOL}) >> ${LOGFILE} 2>&1 &
   disown
   sleep 10
 done
