@@ -45,7 +45,7 @@ clean_logs()
 
 clean_logs
 
-log "Pools : backup - $BACKUP_POOL  /  data - $DATA_POOL"
+log "Pools : BACKUP - $BACKUP_POOL  /  DATA - $DATA_POOL"
 
 for POOL in $BACKUP_POOL $DATA_POOL
 do
@@ -54,7 +54,7 @@ do
   log "Starting cleanup of snapshots in ${POOL} on `date '+%Y%m%d-%H%M'`"
 
 
-  # look for last SNAPS_TO_KEEP backup(s)
+  # look for last SNAPS_TO_KEEP snapshot name(s)/date(s)
   PREVIOUS=`${ZFS} list -H -r -o name -t snapshot ${POOL} | sort -r | head -$SNAPS_TO_KEEP | cut -f2 -d\@ | sort -u`
   if [ -z "${PREVIOUS}" ]
   then
