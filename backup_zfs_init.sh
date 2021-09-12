@@ -70,7 +70,5 @@ for snap in ${SNAPS}
 do
   SNAPS=`echo $SNAPS | sed -e "s,${SOURCE_POOL}\@${snap},,g"`
   log "Start backup of ${SOURCE_POOL}@${snap}"
-  (${ZFS} send -R ${SOURCE_POOL}@${snap} | ${ZFS} recv -Fduv ${BACKUP_POOL}) >> ${LOGFILE} 2>&1 &
-  disown
-  sleep 10
+  ${ZFS} send -R ${SOURCE_POOL}@${snap} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
 done
