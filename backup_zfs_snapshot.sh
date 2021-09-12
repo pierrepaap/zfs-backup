@@ -16,7 +16,8 @@ fi
 #
 if [ $# -ne 1 ]
 then
-  fatal "We need 1 argument: <pool> to create snapshots for its filesystems \n"
+  echo "We need 1 argument: <pool> to create snapshots for its filesystems"
+  fatal "We need 1 argument: <pool> to create snapshots for its filesystems"
 else
   DATA_POOL=$1
 fi
