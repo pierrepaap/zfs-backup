@@ -26,6 +26,7 @@ else
   SOURCE_FS=`echo $SOURCE | cut -f2 -d\/`
   if [ `echo $SOURCE | grep / | wc -l` -eq 0 ]
   then
+    echo "No FS specified in ${SOURCE}"
     fatal "No FS specified in ${SOURCE}"
   fi
 fi
