@@ -6,7 +6,7 @@ cd /path/to/your/scripts
 ./backup_zfs_snapshot.sh src_pool
 
 # backups
-./backup_zfs_USB.sh <src_fs> <dest_pool>
+./backup_zfs_launch.sh <src_fs> <dest_pool>
 
 # cleanup
 sleep 300
