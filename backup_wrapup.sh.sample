@@ -2,11 +2,11 @@
 
 cd /path/to/your/scripts
 
-#[optional] bring dest pool online before backup
-./backup_zfs_import.sh <dest_pool>
-
 # snapshots
 ./backup_zfs_snapshot.sh src_pool
+
+#[optional] bring dest pool online before backup
+./backup_zfs_import.sh <dest_pool>
 
 # backups
 ./backup_zfs_launch.sh <src_fs> <dest_pool>
