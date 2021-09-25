@@ -3,7 +3,7 @@
 #
 
 # username or email address receiving notifications (no default)
-#MAIL_USER=
+#MAIL_USER=""
 
 # directory path where to store log files 
 LOGDIR=.
