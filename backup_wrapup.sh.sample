@@ -2,6 +2,9 @@
 
 cd /path/to/your/scripts
 
+#[optional] bring dest pool online before backup
+./backup_zfs_import.sh <dest_pool>
+
 # snapshots
 ./backup_zfs_snapshot.sh src_pool
 
@@ -11,3 +14,6 @@ cd /path/to/your/scripts
 # cleanup
 sleep 300
 ./backup_zfs_cleanup.sh <src_zfs> <dest_pool>
+
+#[optional] bring dest pool offline after backup
+./backup_zfs_export.sh <dest_pool>
