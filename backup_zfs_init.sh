@@ -64,12 +64,8 @@ fi
 
 #look for unique snapshot name(s)/date(s)
 log "Retrieving the list of unique snapshots name(s)/date(s)"
-SNAPS=`${ZFS} list -H -r -o name -t snapshot ${SOURCE_POOL} | sort -r | cut -f2 -d\@ | sort -u`
-log "List : ${SNAPS}"
+LAST_SNAP=`${ZFS} list -H -r -o name -t snapshot ${SOURCE_POOL} | sort -r | cut -f2 -d\@ | sort -u | tail -1`
+log "Last snap : ${LAST_SNAP}"
 
-for snap in ${SNAPS}
-do
-  SNAPS=`echo $SNAPS | sed -e "s,${SOURCE_POOL}\@${snap},,g"`
-  log "Start backup of ${SOURCE_POOL}@${snap}"
-  ${ZFS} send -R ${SOURCE_POOL}@${snap} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
-done
+log "Start backup of ${SOURCE}@${SNAP}"
+${ZFS} send -R ${SOURCE}@${SNAP} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
