@@ -13,7 +13,7 @@ EXECLOGFILE=${LOGDIR}/exec.log
 LOG_RETENTION=60
 
 # number of snapshot to retain before their cleaned up
-SNAPS_TO_KEEP=2
+SNAPS_RETENTION=2
 
 # zpool and zfs path identification
 if [ ! -z `which zfs` ]

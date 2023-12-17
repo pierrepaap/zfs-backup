@@ -43,8 +43,10 @@ clean_logs()
 # MAIN 
 ##########
 
+# First cleanup the log files
 clean_logs
 
+# Second cleanup the snapshots in pools
 log "Pools : BACKUP - $BACKUP_POOL  /  DATA - $DATA_POOL"
 
 for POOL in $BACKUP_POOL $DATA_POOL
@@ -54,8 +56,8 @@ do
   log "Starting cleanup of snapshots in ${POOL} on `date '+%Y%m%d-%H%M'`"
 
 
-  # look for last SNAPS_TO_KEEP snapshot name(s)/date(s)
-  PREVIOUS=`${ZFS} list -H -r -o name -t snapshot ${POOL} | sort -r | head -$SNAPS_TO_KEEP | cut -f2 -d\@ | sort -u`
+  # look for last SNAPS_RETENTION snapshot name(s)/date(s)
+  PREVIOUS=`${ZFS} list -H -r -o name -t snapshot ${POOL} | sort -r | head -$SNAPS_RETENTION | cut -f2 -d\@ | sort -u`
   if [ -z "${PREVIOUS}" ]
   then
     log "We don't have a backup => don't cleanup, skipping"
