@@ -33,11 +33,10 @@ then
   exit 1
 fi
 
-POOL=$1
-
 #
 # local vars
 #
+POOL=$1
 if [ $# -eq 2 ]
 then
   SNAP_RETENTION=$2
