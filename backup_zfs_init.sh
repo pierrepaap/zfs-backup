@@ -72,7 +72,7 @@ else
   EXISTS_SRC_SNAP=`${ZFS} list -H -r -t snapshot ${SOURCE_POOL} | wc -l`
   if [ ${EXISTS_SRC_SNAP} -eq 0 ]
   then
-    fatal "There are not snapshot on ${SOURCE_POOL}/${SOURCE_FS}. Relaunch after snapshot have been created."
+    fatal "There are no snapshot on ${SOURCE_POOL}/${SOURCE_FS}. Relaunch after snapshot have been created."
   fi
 fi
 

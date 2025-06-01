@@ -52,9 +52,6 @@ TEMPFILE=${LOGDIR}/temp_`basename $0`_$$
 
 clean_logs
 
-log "Pool : $POOL"
-
-
 log " "
 log "************************ POOL ${POOL} *************************"
 log "Starting ZFS cleanup of ${POOL}"

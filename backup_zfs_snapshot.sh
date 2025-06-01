@@ -45,7 +45,7 @@ LOGFILE=${LOGDIR}/snap.`date +%Y%m%d.%H%M`.log
 ##########
 
 log "*******************************"
-log "Starting ZFS snapshot of $DATA_POOL" 
+log "Starting ZFS snapshot @${NOW} of $DATA_POOL" 
 
 # create snapshot
 if ${ZFS} list -H -o name -t snapshot | sort | grep "${DATA_POOL}@${NOW}$" >> $LOGFILE 2>&1
