@@ -48,7 +48,7 @@ LOGFILE=${LOGDIR}/backup.`date +%Y%m%d.%H%M`.log
 
 clean_logs
 log "*******************************"
-log "Starting ZFS backup of $DATA_POOL on `date '+%Y%m%d-%H%M'`"
+log "Starting ZFS backup of $DATA_POOL"
 
 # look for previous snapshot
 PREVIOUS=`${ZFS} list -H -r -o name -t snapshot ${BACKUP_POOL}/${SOURCE_FS} | sort -r | head -1 | cut -f2 -d\@ `

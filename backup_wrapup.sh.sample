@@ -13,7 +13,8 @@ cd /path/to/your/scripts
 
 # cleanup
 sleep 300
-./backup_zfs_cleanup.sh <src_zfs> <dest_pool>
+./backup_zfs_logs_cleanup.sh [retention_days]
+./backup_zfs_snaps_cleanup.sh <src_pool> [retention_days]
 
 #[optional] bring dest pool offline after backup
 ./backup_zfs_export.sh <dest_pool>

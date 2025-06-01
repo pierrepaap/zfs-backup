@@ -57,7 +57,7 @@ log "Pool : $POOL"
 
 log " "
 log "************************ POOL ${POOL} *************************"
-log "Starting ZFS cleanup of ${POOL} on `date '+%Y%m%d-%H%M'`"
+log "Starting ZFS cleanup of ${POOL}"
 
 
 # look for last SNAP_RETENTION backup(s)

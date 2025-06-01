@@ -4,6 +4,9 @@
 ##  This script depends on the backup.vars parameter file
 ##
 
+# NOTE : this script may be removed as it does nothing else 
+# than call the clean_logs function that is called in every script
+
 #
 # global vars
 #
