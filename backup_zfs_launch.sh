@@ -50,8 +50,8 @@ fi
 
 # backup to USB drive
 log "Starting the backup"
-##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${TODAY} | ssh root@$REMOTE_BACKUP_HOST ${ZFS} receive -Fduv $REMOTE_BACKUP_POOL
-${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${TODAY} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} | ssh root@$REMOTE_BACKUP_HOST ${ZFS} receive -Fduv $REMOTE_BACKUP_POOL
+${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
 log " Backup complete"
 
 log "End of backup"

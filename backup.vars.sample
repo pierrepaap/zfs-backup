@@ -26,6 +26,7 @@ then
 fi
 
 TODAY=`date +"%Y%m%d"`
+NOW=`date +"%Y%m%d-%H"`
 #YESTERDAY=`date -d 'yesterday' +"%Y%m%d"`
 
 # common functions for the scripts

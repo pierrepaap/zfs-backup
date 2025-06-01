@@ -45,15 +45,15 @@ LOGFILE=${LOGDIR}/snap.`date +%Y%m%d.%H%M`.log
 ##########
 
 log "*******************************"
-log "Starting ZFS snapshot of $DATA_POOL on `date '+%Y%m%d-%H%M'`"
+log "Starting ZFS snapshot of $DATA_POOL" 
 
-# create today snapshot
-if ${ZFS} list -H -o name -t snapshot | sort | grep "${DATA_POOL}@${TODAY}$" >> $LOGFILE 2>&1
+# create snapshot
+if ${ZFS} list -H -o name -t snapshot | sort | grep "${DATA_POOL}@${NOW}$" >> $LOGFILE 2>&1
 then
-  log " Snapshot ${DATA_POOL}@${TODAY} already exists"
+  log " Snapshot ${DATA_POOL}@${NOW} already exists"
 else
-  log " Taking todays snapshot ${DATA_POOL}@${TODAY}"
-  ${ZFS} snapshot -r ${DATA_POOL}@${TODAY} >> $LOGFILE 2>&1
+  log " Taking snapshot ${DATA_POOL}@${NOW}"
+  ${ZFS} snapshot -r ${DATA_POOL}@${NOW} >> $LOGFILE 2>&1
 fi  
 
 log "End of snapshot"

@@ -62,8 +62,8 @@ fi
 
 # backup to USB drive
 log "starting the backup"
-##${ZFS} send -R -I ${DATA_POOL}@${PREVIOUS} ${DATA_POOL}@${TODAY} | ssh root@$REMOTE_BACKUP_HOST ${ZFS} receive -Fduv $REMOTE_BACKUP_POOL
-${ZFS} send -R -I ${DATA_POOL}@${PREVIOUS} ${DATA_POOL}@${TODAY} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+##${ZFS} send -R -I ${DATA_POOL}@${PREVIOUS} ${DATA_POOL}@${NOW} | ssh root@$REMOTE_BACKUP_HOST ${ZFS} receive -Fduv $REMOTE_BACKUP_POOL
+${ZFS} send -R -I ${DATA_POOL}@${PREVIOUS} ${DATA_POOL}@${NOW} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
  
 log " backup complete destroying previous snapshot (if it's not the last one...)"
 NBR_BACKUP=`${ZFS} list -r -H -t snapshot ${BACKUP_POOL} | grep "${BACKUP_POOL}\@" | wc -l`
