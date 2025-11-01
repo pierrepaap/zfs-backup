@@ -57,7 +57,7 @@ fi
 
 # transfer to remote host
 log "Starting the transfer"
-${ZFS} send -R -I ${SOURCE_POOL}@${PREVIOUS} ${SOURCE_POOL}@${TODAY} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} ${ZFS} receive -Fduv $BACKUP_POOL
+${ZFS} send -R -I ${SOURCE_POOL}@${PREVIOUS} ${SOURCE_POOL}@${TODAY} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "${ZFS} receive -Fduv ${BACKUP_POOL}"
 ##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${TODAY} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
 log " Transfer complete"
 
