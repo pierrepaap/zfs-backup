@@ -36,7 +36,6 @@ fi
 #
 # log outputs from zfs commands
 LOGFILE=${LOGDIR}/remote.`date +%Y%m%d.%H%M`.log
-KEY=
 
 ##########
 # MAIN 
