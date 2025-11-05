@@ -2,8 +2,10 @@
 
 ################################################
 # Requirements:
-# - backup user on remote host
+# - 'backup' user on remote host
 # - SSH keys set up for passwordless login to remote host for backup user
+# - sudoers entry for backup user to allow zfs recv ans zfs list without password
+#   e.g.: backup ALL=(ALL) NOPASSWD: /sbin/zfs recv, /sbin/zfs list
 ################################################
 
 #
@@ -51,14 +53,18 @@ for SOURCE_FS in ${SOURCE_FS_LIST}
 do
   log "    **************************"
   log " Starting transfer for ${SOURCE_FS}"
+  # calculate dest FS name
+  FS=`echo ${SOURCE_FS} | cut -f2- -d\/ `
+  DEST_FS=${BACKUP_POOL}/${FS}
+  log " Destination FS will be ${DEST_FS}"
   # look for previous snapshot
-  PREVIOUS=`${ZFS} list -H -o name -t snapshot ${SOURCE_FS}| sort -r | head -1 | cut -f2 -d\@ `
+  PREVIOUS=`ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "sudo ${ZFS} list -H -o name -t snapshot ${DEST_FS}| sort -r | head -1 | cut -f2 -d\@ " `
   if [ -z ${PREVIOUS} ]
   then
     log " We don't have a previous snapshot for ${FS}  => do it manually, skipping to next FS"
     continue
   else
-    log " Previous date for ${SOURCE_FS} is ${PREVIOUS}"
+    log " Previous date for ${DEST_FS} is ${PREVIOUS}"
   fi
 
   # transfer to remote host
