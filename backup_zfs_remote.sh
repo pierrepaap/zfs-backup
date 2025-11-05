@@ -45,21 +45,31 @@ KEY=
 log "*******************************"
 log "Starting ZFS transfer of $SOURCE_POOL on `date '+%Y%m%d-%H%M'`"
 
-# look for previous snapshot
-PREVIOUS=`${ZFS} list -H -o name -t snapshot ${SOURCE_POOL}| sort -r | head -1 | cut -f2 -d\@ `
-if [ -z ${PREVIOUS} ]
-then
-  log "We don't have a previous snapshot => do it manually, exiting"
-  exit 3
-else
-  log "Previous date is ${PREVIOUS}"
-fi
+SOURCE_FS_LIST=`${ZFS} list -H -o name -t filesystem -r ${SOURCE_POOL} | tail -n +2`
+log "List of SOURCE_FS to transfer: ${SOURCE_FS_LIST}"
 
-# transfer to remote host
-log "Starting the transfer"
-${ZFS} send -R -I ${SOURCE_POOL}@${PREVIOUS} ${SOURCE_POOL}@${TODAY} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "${ZFS} receive -Fduv ${BACKUP_POOL}"
-##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${TODAY} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
-log " Transfer complete"
+for SOURCE_FS in ${SOURCE_FS_LIST}
+do
+  log "    **************************"
+  log " Starting transfer for ${SOURCE_FS}"
+  # look for previous snapshot
+  PREVIOUS=`${ZFS} list -H -o name -t snapshot ${SOURCE_FS}| sort -r | head -1 | cut -f2 -d\@ `
+  if [ -z ${PREVIOUS} ]
+  then
+    log " We don't have a previous snapshot for ${FS}  => do it manually, exiting"
+    exit 3
+  else
+    log " Previous date for ${SOURCE_FS} is ${PREVIOUS}"
+  fi
 
-log "End of transfer"
+  # transfer to remote host
+  log " Starting the transfer"
+  ${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${TODAY} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "${ZFS} receive -Fduv ${BACKUP_POOL}"
+  ##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${TODAY} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+  log " Transfer complete for ${SOURCE_FS}"
+  log "    **************************"
+
+done
+
+log "End of transfer for ${SOURCE_POOL}"
 
