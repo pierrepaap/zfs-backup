@@ -56,8 +56,8 @@ do
   PREVIOUS=`${ZFS} list -H -o name -t snapshot ${SOURCE_FS}| sort -r | head -1 | cut -f2 -d\@ `
   if [ -z ${PREVIOUS} ]
   then
-    log " We don't have a previous snapshot for ${FS}  => do it manually, exiting"
-    exit 3
+    log " We don't have a previous snapshot for ${FS}  => do it manually, skipping to next FS"
+    continue
   else
     log " Previous date for ${SOURCE_FS} is ${PREVIOUS}"
   fi
