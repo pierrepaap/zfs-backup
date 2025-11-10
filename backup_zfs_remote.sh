@@ -45,6 +45,7 @@ LOGFILE=${LOGDIR}/remote.`date +%Y%m%d.%H%M`.log
 
 log "*******************************"
 log "Starting ZFS transfer of $SOURCE_POOL on `date '+%Y%m%d-%H%M'`"
+log "Inputs: keyfile=${KEY}, remotehost=${REMOTE_BACKUP_HOST}, srcpool=${SOURCE_POOL}, dstpool=${BACKUP_POOL}"
 
 SOURCE_FS_LIST=`${ZFS} list -H -o name -t filesystem -r ${SOURCE_POOL} | tail -n +2`
 log "List of SOURCE_FS to transfer: ${SOURCE_FS_LIST}"

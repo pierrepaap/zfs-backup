@@ -54,7 +54,9 @@ LOGFILE=/zdocs/server/log/backup_init.`date +%Y%m%d.%H%M`.log
 # MAIN 
 ##########
 
-echo "Logs can be found in ${EXECLOGFILE} and ${LOGFILE}"
+log "*******************************"
+log "Starting ZFS initial backup of ${DATA_POOL} to ${BACKUP_POOL}"
+log "Logs can be found in ${EXECLOGFILE} and ${LOGFILE}"
 
 # Check if FS exists on backup pool
 EXISTS_BKP_FS=`${ZFS} list -H | grep ^${BACKUP_POOL}/${SOURCE_FS} | wc -l `
