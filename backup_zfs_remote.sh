@@ -68,11 +68,18 @@ do
     log " Previous date for ${DEST_FS} is ${PREVIOUS}"
   fi
 
+  OPTION=""
+  if [ x`zfs get recordsize -H -o value zmedia/multimedia` = "x1M" ]
+  then
+    OPTION=" --large-block "
+    log "Using --large-block for multimedia filesystem"
+  fi
+
   # transfer to remote host
   log " Starting the transfer"
-  log "${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${NOW} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} sudo ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1"
-  ${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${NOW} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} sudo ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
-  ##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+  log "${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${NOW} ${OPTION} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} sudo ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1"
+  ${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${NOW} ${OPTION} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} sudo ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+  ##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} ${OPTION} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
   log " Transfer complete for ${SOURCE_FS}"
   log "    **************************"
 
