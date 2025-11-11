@@ -36,19 +36,21 @@ check_pool()
 #
 # args
 #
-if [ $# -lt 1 ] || [ $# -ne 2 ] 
+if [ $# -ne 2 ]
 then
-  echo "Usage: $0 <data_pool_name> <backup_pool_name>"
-  exit 1
+  echo "We need 2 arguments <datapool/fs> <backup_pool>"
+  fatal "We need 2 arguments <datapool/fs> <backup_pool>"
+else
+  SOURCE=$1
+  BACKUP_POOL=$2
+  SOURCE_POOL=`echo $SOURCE | cut -f1 -d\/`
+  SOURCE_FS=`echo $SOURCE | cut -f2 -d\/`
 fi
-
-DATA_POOL=$1
-BACKUP_POOL=$2
 
 #
 # local vars
 #
-LOGFILE=/zdocs/server/log/backup_init.`date +%Y%m%d.%H%M`.log
+LOGFILE=/zmedia/server/log/backup_init.`date +%Y%m%d.%H%M`.log
 
 ##########
 # MAIN 
@@ -69,7 +71,7 @@ if [ ${EXISTS_SRC_FS} -eq 0 ]
 then
   fatal "Source FS ${SOURCE_POOL}/${SOURCE_FS} does not exist, nothing to backup"
 else
-  EXISTS_SRC_SNAP=`${ZFS} list -H -r -t snapshot ${SOURCE_POOL} | wc -l`
+  EXISTS_SRC_SNAP=`${ZFS} list -H -t snapshot ${SOURCE_POOL}/${SOURCE_FS} | wc -l`
   if [ ${EXISTS_SRC_SNAP} -eq 0 ]
   then
     fatal "There are no snapshot on ${SOURCE_POOL}/${SOURCE_FS}. Relaunch after snapshot have been created."
@@ -78,8 +80,8 @@ fi
 
 #look for unique snapshot name(s)/date(s)
 log "Retrieving the list of unique snapshots name(s)/date(s)"
-LAST_SNAP=`${ZFS} list -H -r -o name -t snapshot ${SOURCE_POOL} | sort -r | cut -f2 -d\@ | sort -u | tail -1`
+LAST_SNAP=`${ZFS} list -H -r -o name -t snapshot ${SOURCE_POOL}/${SOURCE_FS} | sort -r | cut -f2 -d\@ | sort -u | tail -1`
 log "Last snap : ${LAST_SNAP}"
 
-log "Start backup of ${SOURCE}@${SNAP}"
-${ZFS} send -R ${SOURCE}@${SNAP} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
+log "Start backup of ${SOURCE}@${LAST_SNAP}"
+${ZFS} send -R ${SOURCE}@${LAST_SNAP} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
