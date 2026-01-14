@@ -68,7 +68,7 @@ do
   DEST_FS=${BACKUP_POOL}/${FS}
   log " Destination FS will be ${DEST_FS}"
   # look for previous snapshot
-  PREVIOUS=`ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "sudo ${ZFS} list -H -o name -t snapshot ${DEST_FS}| sort -r | head -1 | cut -f2 -d\@ " `
+  PREVIOUS=`ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "sudo ${ZFS} list -H -o name -t snapshot ${DEST_FS}| sort -r | head -1 | cut -f2 -d\@ " >> $LOGFILE 2>&1 `
   if [ -z ${PREVIOUS} ]
   then
     log " We don't have a previous snapshot for ${FS}  => do it manually, skipping to next FS"
@@ -87,8 +87,15 @@ do
   # transfer to remote host
   log " Starting the transfer"
   log "${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${NOW} ${OPTION} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} sudo ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1"
+  echo "${SOURCE_FS}@${PREVIOUS} -> ${SOURCE_FS}@${NOW} with OPTION: <${OPTION}>" >> $LOGFILE 2>&1
   ${ZFS} send -R -I ${SOURCE_FS}@${PREVIOUS} ${SOURCE_FS}@${NOW} ${OPTION} | ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} sudo ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
   ##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} ${OPTION} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+  if [ $? -ne 0 ]
+  then
+    fatal " ZFS send/recv failed for ${SOURCE_FS} with code $?"
+  else
+    log " ZFS send/recv completed for ${SOURCE_FS}"
+  fi
   log " Transfer complete for ${SOURCE_FS}"
   log "    **************************"
 
