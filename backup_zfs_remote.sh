@@ -47,6 +47,15 @@ log "*******************************"
 log "Starting ZFS transfer of $SOURCE_POOL on `date '+%Y%m%d-%H%M'`"
 log "Inputs: keyfile=${KEY}, remotehost=${REMOTE_BACKUP_HOST}, srcpool=${SOURCE_POOL}, dstpool=${BACKUP_POOL}"
 
+log "Testing connection to remote host ${REMOTE_BACKUP_HOST}"
+ssh -i ${KEY} backup@${REMOTE_BACKUP_HOST} "pwd"
+if [ $? -ne 0 ]
+then
+  fatal "Cannot connect to remote host ${REMOTE_BACKUP_HOST} using key ${KEY}"
+else
+  log "Connection to remote host ${REMOTE_BACKUP_HOST} successful"
+fi
+
 SOURCE_FS_LIST=`${ZFS} list -H -o name -t filesystem -r ${SOURCE_POOL} | tail -n +2`
 log "List of SOURCE_FS to transfer: ${SOURCE_FS_LIST}"
 
