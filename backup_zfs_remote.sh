@@ -68,9 +68,10 @@ do
   DEST_FS=${BACKUP_POOL}/${FS}
   log " Destination FS will be ${DEST_FS}"
   # look for previous snapshot
-  PREVIOUS=`ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "sudo ${ZFS} list -H -o name -t snapshot ${DEST_FS}| sort -r | head -1 | cut -f2 -d\@ " >> $LOGFILE 2>&1 `
+  PREVIOUS=`ssh backup@${REMOTE_BACKUP_HOST} -i ${KEY} "sudo ${ZFS} list -H -o name -t snapshot ${DEST_FS}| sort -r | head -1 | cut -f2 -d\@ "`
   if [ -z ${PREVIOUS} ]
   then
+    echo "previous is emty. Value: <${PREVIOUS}>" >> $LOGFILE 2>&1
     log " We don't have a previous snapshot for ${FS}  => do it manually, skipping to next FS"
     continue
   else
