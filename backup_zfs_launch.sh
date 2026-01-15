@@ -49,10 +49,18 @@ else
   log "Previous date is ${PREVIOUS}"
 fi
 
+# check for the use of large-block option
+OPTION=""
+if [ x`zfs get recordsize -H -o value ${SOURCE}` = "x1M" ]
+then
+  OPTION=" --large-block "
+  log "Using --large-block for ${SOURCE} filesystem"
+fi
+
 # backup to USB drive
 log "Starting the backup"
-##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} | ssh root@$REMOTE_BACKUP_HOST ${ZFS} receive -Fduv $REMOTE_BACKUP_POOL
-${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
+##${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} ${OPTION} | ssh root@$REMOTE_BACKUP_HOST ${ZFS} receive -Fduv $REMOTE_BACKUP_POOL
+${ZFS} send -R -I ${SOURCE}@${PREVIOUS} ${SOURCE}@${NOW} ${OPTION} | ${ZFS} receive -Fduv ${BACKUP_POOL} >> $LOGFILE 2>&1
 log " Backup complete"
 
 log "End of backup"

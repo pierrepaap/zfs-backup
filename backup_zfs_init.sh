@@ -85,5 +85,13 @@ log "Retrieving the list of unique snapshots name(s)/date(s)"
 LAST_SNAP=`${ZFS} list -H -r -o name -t snapshot ${SOURCE_POOL}/${SOURCE_FS} | sort -r | cut -f2 -d\@ | sort -u | tail -1`
 log "Last snap : ${LAST_SNAP}"
 
+# check for the use of large-block option
+OPTION=""
+if [ x`zfs get recordsize -H -o value ${SOURCE}` = "x1M" ]
+then
+  OPTION=" --large-block "
+  log "Using --large-block for ${SOURCE} filesystem"
+fi
+
 log "Start backup of ${SOURCE}@${LAST_SNAP}"
-${ZFS} send -R ${SOURCE}@${LAST_SNAP} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
+${ZFS} send -R ${SOURCE}@${LAST_SNAP} ${OPTION} | ${ZFS} recv -Fduv ${BACKUP_POOL} >> ${LOGFILE} 2>&1
