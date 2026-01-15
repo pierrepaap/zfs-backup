@@ -79,10 +79,10 @@ do
   fi
 
   OPTION=""
-  if [ x`zfs get recordsize -H -o value zmedia/multimedia` = "x1M" ]
+  if [ x`zfs get recordsize -H -o value ${SOURCE_FS}` = "x1M" ]
   then
     OPTION=" --large-block "
-    log "Using --large-block for multimedia filesystem"
+    log "Using --large-block for ${SOURCE_FS} filesystem"
   fi
 
   # transfer to remote host
